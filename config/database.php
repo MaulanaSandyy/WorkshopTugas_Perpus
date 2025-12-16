@@ -19,7 +19,7 @@ if (mysqli_connect_errno()) {
 // --- PENGATURAN APLIKASI ---
 
 // URL Utama Aplikasi (WAJIB diakhiri dengan /)
-$main_url = 'http://localhost/perpustakaan/';
+$main_url = 'http://localhost/workshopTugas_perpus/';
 
 // Pengaturan Peminjaman
 define('LAMA_PEMINJAMAN', 7); // Durasi peminjaman dalam hari

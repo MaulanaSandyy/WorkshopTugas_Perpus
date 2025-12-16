@@ -2,7 +2,7 @@
         <div class="container-fluid">
             <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between small">
                 <div class="text-muted mb-2 mb-sm-0">Tugas untuk memenuhi setifikat workshop.</div>
-                <div class="text-muted">Copyright &copy; Maulana Sandy <?php echo date("Y"); ?></div>
+                <div class="text-muted">Version 3.2 Copyright &copy; Maulana Sandy <?php echo date("Y"); ?></div>
             </div>
         </div>
     </footer>

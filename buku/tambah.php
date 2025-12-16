@@ -1,5 +1,6 @@
 <?php
-require_once '../templates/header.php';
+session_start();
+require_once '../config/database.php';
 check_login(['admin']);
 $errors = [];
 
@@ -13,43 +14,65 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nama_file_cover = '';
 
     // Logika Upload Cover
-    if (isset($_FILES['cover']) && $_FILES['cover']['error'] == 0) {
+    if (isset($_FILES['cover']) && $_FILES['cover']['error'] === 0) {
         $target_dir = "../uploads/cover/";
-        $nama_file_cover = time() . '_' . basename($_FILES["cover"]["name"]);
+
+        if (!is_dir($target_dir)) {
+            mkdir($target_dir, 0755, true);
+        }
+
+        $nama_file_cover = time() . '_' . basename($_FILES['cover']['name']);
         $target_file = $target_dir . $nama_file_cover;
         $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-        // Validasi file gambar
-        $check = getimagesize($_FILES["cover"]["tmp_name"]);
-        if($check === false) {
+        $check = getimagesize($_FILES['cover']['tmp_name']);
+        if ($check === false) {
             $errors[] = "File yang diupload bukan gambar.";
         }
+
         if (!in_array($imageFileType, ['jpg', 'jpeg', 'png', 'gif'])) {
-            $errors[] = "Hanya format JPG, JPEG, PNG & GIF yang diizinkan.";
+            $errors[] = "Hanya format JPG, JPEG, PNG, dan GIF yang diizinkan.";
         }
 
         if (empty($errors)) {
-            if (!move_uploaded_file($_FILES["cover"]["tmp_name"], $target_file)) {
-                $errors[] = "Maaf, terjadi error saat mengupload file.";
+            if (!move_uploaded_file($_FILES['cover']['tmp_name'], $target_file)) {
+                $errors[] = "Gagal mengupload cover buku.";
             }
         }
     }
 
+    // ===== SIMPAN KE DATABASE =====
     if (empty($errors)) {
-        $query = "INSERT INTO buku (judul, penulis, penerbit, tahun_terbit, stok, cover, sinopsis) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $query = "INSERT INTO buku 
+                    (judul, penulis, penerbit, tahun_terbit, stok, cover, sinopsis)
+                  VALUES (?, ?, ?, ?, ?, ?, ?)";
+
         $stmt = mysqli_prepare($koneksi, $query);
-        mysqli_stmt_bind_param($stmt, "ssssiss", $judul, $penulis, $penerbit, $tahun_terbit, $stok, $nama_file_cover, $sinopsis);
-        
+        mysqli_stmt_bind_param(
+            $stmt,
+            "ssssiss",
+            $judul,
+            $penulis,
+            $penerbit,
+            $tahun_terbit,
+            $stok,
+            $nama_file_cover,
+            $sinopsis
+        );
+
         if (mysqli_stmt_execute($stmt)) {
             $_SESSION['pesan'] = "Buku baru berhasil ditambahkan.";
             header("Location: " . $main_url . "buku/index.php");
-            exit();
+            exit;
         } else {
             $errors[] = "Gagal menyimpan data ke database.";
         }
     }
 }
 ?>
+
+<?php require_once '../templates/header.php'; ?>
+
 <h1 class="h3 mb-4">Tambah Buku Baru</h1>
 <div class="card">
     <div class="card-body">

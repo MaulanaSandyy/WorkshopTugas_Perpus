@@ -3,11 +3,11 @@
 
 date_default_timezone_set('Asia/Jakarta');
 
-// Detail Database
-$db_host = 'localhost';
-$db_user = 'root';
-$db_pass = '';
-$db_name = 'db_perpustakaan';
+// Detail Database (mendukung environment variables untuk Vercel)
+$db_host = getenv('DB_HOST') ?: 'localhost';
+$db_user = getenv('DB_USER') ?: 'root';
+$db_pass = getenv('DB_PASS') ?: '';
+$db_name = getenv('DB_NAME') ?: 'db_perpustakaan';
 
 $koneksi = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
 
@@ -19,7 +19,7 @@ if (mysqli_connect_errno()) {
 // --- PENGATURAN APLIKASI ---
 
 // URL Utama Aplikasi (WAJIB diakhiri dengan /)
-$main_url = 'http://localhost/workshopTugas_perpus/';
+$main_url = getenv('APP_URL') ?: 'http://localhost/workshopTugas_perpus/';
 
 // Pengaturan Peminjaman
 define('LAMA_PEMINJAMAN', 7); // Durasi peminjaman dalam hari

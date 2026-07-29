@@ -19,7 +19,14 @@ if (mysqli_connect_errno()) {
 // --- PENGATURAN APLIKASI ---
 
 // URL Utama Aplikasi (WAJIB diakhiri dengan /)
-$main_url = getenv('APP_URL') ?: 'http://localhost/workshopTugas_perpus/';
+if (getenv('APP_URL')) {
+    $main_url = getenv('APP_URL');
+} elseif (isset($_SERVER['HTTP_HOST'])) {
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $main_url = $protocol . '://' . $_SERVER['HTTP_HOST'] . '/';
+} else {
+    $main_url = 'http://localhost/workshopTugas_perpus/';
+}
 
 // Pengaturan Peminjaman
 define('LAMA_PEMINJAMAN', 7); // Durasi peminjaman dalam hari
